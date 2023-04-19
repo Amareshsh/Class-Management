@@ -3,136 +3,110 @@
 BEGIN;
 
 
-CREATE TABLE IF NOT EXISTS mycl.students
-(
-    student_id numeric,
-    email_id text,
-    date_of_join date,
-    date_of_birth date,
-    created_by numeric,
-    created_on timestamp without time zone,
-    modified_by numeric,
-    modified_on timestamp without time zone,
-    PRIMARY KEY (student_id)
-);
-
-CREATE TABLE IF NOT EXISTS mycl.stud_classes
-(
-    student_id numeric,
-    class_id numeric,
-    mandatory boolean,
-    created_by numeric,
-    created_on time without time zone,
-    modified_by numeric,
-    modified_on time without time zone,
-    PRIMARY KEY (student_id, class_id)
-);
-
 CREATE TABLE IF NOT EXISTS mycl.classes
 (
-    class_id numeric,
-    building_name text,
-    room_no text,
-    subject_id numeric,
-    created_by numeric,
-    created_on time without time zone,
-    modified_by numeric,
-    modified_on time without time zone,
-    PRIMARY KEY (class_id, subject_id)
-);
-
-CREATE TABLE IF NOT EXISTS mycl.teacher
-(
-    teacher_id numeric,
-    email_id text,
-    date_of_join date,
-    date_of_birth date,
-    created_by numeric,
-    created_on time without time zone,
-    modified_on time with time zone,
-    modified_by numeric,
-    PRIMARY KEY (teacher_id)
-);
-
-CREATE TABLE IF NOT EXISTS mycl.teacher_classes
-(
-    teacher_id numeric,
-    class_id numeric,
-    created_by numeric,
-    created_on time without time zone,
-    modified_by numeric,
-    modified_on time without time zone,
-    PRIMARY KEY (teacher_id, class_id)
+    class_id numeric NOT NULL,
+    building_name text COLLATE pg_catalog."default",
+    room_no text COLLATE pg_catalog."default",
+    subject_id numeric NOT NULL,
+    CONSTRAINT classes_pkey PRIMARY KEY (class_id)
 );
 
 CREATE TABLE IF NOT EXISTS mycl.schedule
 (
-    class_id numeric,
+    class_id numeric NOT NULL,
     start_time time without time zone,
-    end_time timestamp with time zone,
-    created_by numeric,
-    created_on time without time zone,
-    modified_by numeric,
-    modified_on time without time zone,
-    day_of_week integer,
-    PRIMARY KEY (class_id, day_of_week)
+    end_time time without time zone,
+    day_of_week integer NOT NULL,
+    CONSTRAINT schedule_pkey PRIMARY KEY (class_id, day_of_week)
+);
+
+CREATE TABLE IF NOT EXISTS mycl.stud_classes
+(
+    student_id numeric NOT NULL,
+    class_id numeric NOT NULL,
+    mandatory boolean,
+    CONSTRAINT stud_classes_pkey PRIMARY KEY (student_id, class_id)
+);
+
+CREATE TABLE IF NOT EXISTS mycl.students
+(
+    student_id numeric NOT NULL,
+    email_id text COLLATE pg_catalog."default" NOT NULL,
+    date_of_join date,
+    date_of_birth date NOT NULL,
+    name text NOT NULL,
+    CONSTRAINT students_pkey PRIMARY KEY (student_id)
 );
 
 CREATE TABLE IF NOT EXISTS mycl.subjects
 (
-    subject_id numeric,
-    name text,
-    type date,
-    created_by numeric,
-    created_on time without time zone,
-    modified_on time with time zone,
-    modified_by numeric,
-    PRIMARY KEY (subject_id)
+    subject_id numeric NOT NULL,
+    name text COLLATE pg_catalog."default",
+    type text,
+    CONSTRAINT subjects_pkey PRIMARY KEY (subject_id)
 );
 
-ALTER TABLE IF EXISTS mycl.stud_classes
-    ADD FOREIGN KEY (student_id)
-    REFERENCES mycl.students (student_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
+CREATE TABLE IF NOT EXISTS mycl.teacher
+(
+    teacher_id numeric NOT NULL,
+    email_id text COLLATE pg_catalog."default",
+    date_of_join date,
+    date_of_birth date,
+    name text NOT NULL,
+    CONSTRAINT teacher_pkey PRIMARY KEY (teacher_id)
+);
 
+CREATE TABLE IF NOT EXISTS mycl.teacher_classes
+(
+    teacher_id numeric NOT NULL,
+    class_id numeric NOT NULL,
+    CONSTRAINT teacher_classes_pkey PRIMARY KEY (teacher_id, class_id)
+);
 
 ALTER TABLE IF EXISTS mycl.classes
-    ADD FOREIGN KEY (class_id)
-    REFERENCES mycl.stud_classes (class_id) MATCH SIMPLE
+    ADD CONSTRAINT classes_subject_id_fkey FOREIGN KEY (subject_id)
+    REFERENCES mycl.subjects (subject_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS mycl.classes
-    ADD FOREIGN KEY (class_id)
-    REFERENCES mycl.schedule (class_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS mycl.teacher
-    ADD FOREIGN KEY (teacher_id)
-    REFERENCES mycl.teacher_classes (teacher_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS mycl.teacher_classes
-    ADD FOREIGN KEY (class_id)
+ALTER TABLE IF EXISTS mycl.schedule
+    ADD CONSTRAINT schedule_class_id_fkey FOREIGN KEY (class_id)
     REFERENCES mycl.classes (class_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS mycl.subjects
-    ADD FOREIGN KEY (subject_id)
-    REFERENCES mycl.classes (subject_id) MATCH SIMPLE
+ALTER TABLE IF EXISTS mycl.stud_classes
+    ADD CONSTRAINT stud_classes_class_id_fkey FOREIGN KEY (class_id)
+    REFERENCES mycl.classes (class_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS mycl.stud_classes
+    ADD CONSTRAINT stud_classes_student_id_fkey FOREIGN KEY (student_id)
+    REFERENCES mycl.students (student_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS mycl.teacher_classes
+    ADD CONSTRAINT teacher_classes_class_id_fkey FOREIGN KEY (class_id)
+    REFERENCES mycl.classes (class_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS mycl.teacher_classes
+    ADD CONSTRAINT teacher_classes_teacher_id_fkey FOREIGN KEY (teacher_id)
+    REFERENCES mycl.teacher (teacher_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
