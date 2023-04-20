@@ -2,6 +2,13 @@
 -- Please log an issue at https://redmine.postgresql.org/projects/pgadmin4/issues/new if you find any bugs, including reproduction steps.
 BEGIN;
 
+CREATE DATABASE db_college;
+
+CREATE USER admin WITH PASSWORD 'password';
+
+GRANT ALL PRIVILEGES ON DATABASE db_college TO admin;
+
+CREATE SCHEMA mycl;
 
 CREATE TABLE IF NOT EXISTS mycl.classes
 (
