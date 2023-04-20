@@ -53,3 +53,21 @@ def teachers():
     cur.close()
     conn.close()
     return render_template('teachers.html',teachers = teachers)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("select usr.user_id,usr.teacher_id,usr.student_id "\
+                    "from mycl.users usr "\
+                    "where  usr.password = '"+ str(request.form['password']) +"' "\
+                    "and    usr.name = '"+ str(request.form['username']) +"'")
+        teachers = cur.fetchall()
+        cur.close()
+        conn.close()
+        if teachers != "":
+            return redirect(url_for('home'))
+    return render_template('login.html', error=error)

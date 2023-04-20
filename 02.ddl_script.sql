@@ -2,26 +2,20 @@
 -- Please log an issue at https://redmine.postgresql.org/projects/pgadmin4/issues/new if you find any bugs, including reproduction steps.
 BEGIN;
 
-CREATE DATABASE db_college;
-
-CREATE USER admin WITH PASSWORD 'password';
-
-GRANT ALL PRIVILEGES ON DATABASE db_college TO admin;
-
-CREATE SCHEMA mycl;
+CREATE SCHEMA IF NOT EXISTS mycl;
 
 CREATE TABLE IF NOT EXISTS mycl.classes
 (
-    class_id numeric NOT NULL,
+    class_id SERIAL NOT NULL,
     building_name text COLLATE pg_catalog."default",
     room_no text COLLATE pg_catalog."default",
-    subject_id numeric NOT NULL,
+    subject_id integer NOT NULL,
     CONSTRAINT classes_pkey PRIMARY KEY (class_id)
 );
 
 CREATE TABLE IF NOT EXISTS mycl.schedule
 (
-    class_id numeric NOT NULL,
+    class_id integer,
     start_time time without time zone,
     end_time time without time zone,
     day_of_week integer NOT NULL,
@@ -30,15 +24,15 @@ CREATE TABLE IF NOT EXISTS mycl.schedule
 
 CREATE TABLE IF NOT EXISTS mycl.stud_classes
 (
-    student_id numeric NOT NULL,
-    class_id numeric NOT NULL,
+    student_id integer NOT NULL,
+    class_id integer NOT NULL,
     mandatory boolean,
     CONSTRAINT stud_classes_pkey PRIMARY KEY (student_id, class_id)
 );
 
 CREATE TABLE IF NOT EXISTS mycl.students
 (
-    student_id numeric NOT NULL,
+    student_id SERIAL NOT NULL,
     email_id text COLLATE pg_catalog."default" NOT NULL,
     date_of_join date,
     date_of_birth date NOT NULL,
@@ -48,7 +42,7 @@ CREATE TABLE IF NOT EXISTS mycl.students
 
 CREATE TABLE IF NOT EXISTS mycl.subjects
 (
-    subject_id numeric NOT NULL,
+    subject_id SERIAL NOT NULL,
     name text COLLATE pg_catalog."default",
     type text,
     CONSTRAINT subjects_pkey PRIMARY KEY (subject_id)
@@ -56,7 +50,7 @@ CREATE TABLE IF NOT EXISTS mycl.subjects
 
 CREATE TABLE IF NOT EXISTS mycl.teacher
 (
-    teacher_id numeric NOT NULL,
+    teacher_id SERIAL NOT NULL,
     email_id text COLLATE pg_catalog."default",
     date_of_join date,
     date_of_birth date,
@@ -66,9 +60,21 @@ CREATE TABLE IF NOT EXISTS mycl.teacher
 
 CREATE TABLE IF NOT EXISTS mycl.teacher_classes
 (
-    teacher_id numeric NOT NULL,
-    class_id numeric NOT NULL,
+    teacher_id integer NOT NULL,
+    class_id integer NOT NULL,
     CONSTRAINT teacher_classes_pkey PRIMARY KEY (teacher_id, class_id)
+);
+
+CREATE TABLE IF NOT EXISTS mycl.users
+(
+    user_id SERIAL NOT NULL,
+    password text,
+    last_login timestamp without time zone NOT NULL,
+    name text NOT NULL,
+    teacher_id integer,
+    student_id integer,
+    CONSTRAINT user_pkey PRIMARY KEY (user_id),
+    CONSTRAINT c_unique unique( name, password)
 );
 
 ALTER TABLE IF EXISTS mycl.classes
@@ -117,5 +123,35 @@ ALTER TABLE IF EXISTS mycl.teacher_classes
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
+
+ALTER TABLE IF EXISTS mycl.users
+    ADD CONSTRAINT user_student_id_fkey FOREIGN KEY (student_id)
+    REFERENCES mycl.students (student_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+ALTER TABLE IF EXISTS mycl.users
+    ADD CONSTRAINT user_teacher_id_fkey FOREIGN KEY (teacher_id)
+    REFERENCES mycl.teacher (teacher_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+CREATE INDEX stud_classes_idx
+ON mycl.stud_classes
+USING BTREE (student_id, class_id);
+
+CREATE INDEX stundent_id_idx
+ON mycl.students
+USING BTREE (student_id);
+
+CREATE INDEX class_id_idx
+ON mycl.classes
+USING BTREE (class_id);
+
+CREATE INDEX subject_id_idx
+ON mycl.subjects
+USING BTREE (subject_id);
 
 END;

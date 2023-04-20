@@ -1,0 +1,5 @@
+CREATE DATABASE db_college;
+
+CREATE USER admin WITH PASSWORD 'password';
+
+GRANT ALL PRIVILEGES ON DATABASE db_college TO admin;
