@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Welcome to College!</h1>
+    <h2>{% block title %} List of classes avaliable today{% endblock %}</h2>
+    <h3>{{ utc_dt }}</h3>
+    
+    <div style="width: 100%; margin: auto">
+        {% for subject in subjects %}
+        <div style="padding: 10px; background-color: #EEE; margin: 8px">
+            <p style="font-size: 24px">{{ subject[0] }}</p>
+            <p style="font-size: 24px">{{ subject[1] }}</p>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}

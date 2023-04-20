@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Teachers {% endblock %}</h1>
+    <div style="width: 50%; margin: auto">
+        {% for teacher in teachers %}
+        <div style="padding: 10px; background-color: #EEE; margin: 20px">
+            <p style="font-size: 24px">{{ teacher[0] }}</p>
+            <p style="font-size: 24px">{{ teacher[1] }}</p>
+            <p style="font-size: 24px">{{ teacher[2] }}</p>
+            <p style="font-size: 24px">{{ teacher[3] }}</p>
+            <p style="font-size: 24px">{{ teacher[4] }}</p>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}

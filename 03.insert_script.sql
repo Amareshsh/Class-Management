@@ -75,6 +75,15 @@ INSERT INTO mycl.stud_classes(
 	student_id, class_id, mandatory)
 	VALUES (2, 2, True);
 
+-- schedule table
 INSERT INTO mycl.schedule(
 	class_id, start_time, end_time, day_of_week)
 	VALUES (1, '12:00', '13:00', 1);
+
+INSERT INTO mycl.schedule(
+	class_id, start_time, end_time, day_of_week)
+	VALUES (1, '12:00', '13:00', 0);
+	
+INSERT INTO mycl.schedule(
+	class_id, start_time, end_time, day_of_week)
+	VALUES (2, '13:00', '14:00', 0);
