@@ -10,7 +10,8 @@ query = "select sch.start_time,sub.name from "\
         "INNER JOIN mycl.classes cla "\
         "on cla.class_id = sch.class_id "\
         "INNER JOIN mycl.subjects sub "\
-        "on sub.subject_id = cla.subject_id"
+        "on sub.subject_id = cla.subject_id "\
+        "WHERE sch.day_of_week = "+str(datetime.datetime.today().weekday())+" ;"
 
 app = Flask(__name__)
 
@@ -157,3 +158,79 @@ def tAssignClass():
         if error == None:
             return redirect(url_for('tAssignClass'))
     return render_template('tAssignClass.html', error=error)
+
+
+@app.route('/vStudentsClass',methods=['GET', 'POST'])
+def vStudentsClass():
+    error = None
+    if request.method == 'POST':
+        try:
+            conn = get_connection()
+            cur = conn.cursor()
+            cur.execute( "select sche.start_time, "\
+                         "sche.end_time, "\
+	                     "sche.day_of_week, "\
+	                     "tech.name, "\
+	                     "cla.building_name, "\
+	                     "subj.name "\
+                          "from   mycl.stud_classes stcl "\
+                          "INNER  JOIN mycl.schedule sche "\
+                          "ON sche.class_id = stcl.class_id "\
+                          "INNER JOIN  mycl.teacher_classes tecl "\
+                          "ON tecl.class_id = sche.class_id "\
+                          "INNER JOIN mycl.teacher tech "\
+                          "ON tech.teacher_id = tecl.teacher_id "\
+                          "INNER JOIN mycl.classes cla "\
+                          "ON cla.class_id= stcl.class_id "\
+                          "INNER JOIN mycl.subjects subj "\
+                          "ON subj.subject_id = cla.subject_id "\
+                          "WHERE  stcl.student_id = "+str(request.form['student_id']) +" "\
+                          "ORDER BY (sche.day_of_week, sche.start_time ) ASC;")
+            students = cur.fetchall()
+            cur.close()
+            conn.close()
+        except:
+            error = 'Enter proper values'
+            cur.close()
+            conn.close()
+
+        if error == None:
+            return render_template('vStudentsClass.html', students = students)
+    return render_template('vStudentsClass.html', error=error)
+
+
+@app.route('/vTeachersClass',methods=['GET', 'POST'])
+def vTeachersClass():
+    error = None
+    if request.method == 'POST':
+        try:
+            conn = get_connection()
+            cur = conn.cursor()
+            cur.execute( "select sche.start_time, "\
+                         "sche.end_time, "\
+	                     "sche.day_of_week, "\
+	                     "tech.name, "\
+	                     "cla.building_name, "\
+	                     "subj.name "\
+                          "from   mycl.teacher_classes tecl "\
+                          "INNER  JOIN mycl.schedule sche "\
+                          "ON sche.class_id = tecl.class_id "\
+                          "INNER JOIN mycl.teacher tech "\
+                          "ON tech.teacher_id = tecl.teacher_id "\
+                          "INNER JOIN mycl.classes cla "\
+                          "ON cla.class_id= tecl.class_id "\
+                          "INNER JOIN mycl.subjects subj "\
+                          "ON subj.subject_id = cla.subject_id "\
+                          "WHERE  tecl.teacher_id = "+str(request.form['teacher_id']) +" "\
+                          "ORDER BY (sche.day_of_week, sche.start_time ) ASC;")
+            teachers = cur.fetchall()
+            cur.close()
+            conn.close()
+        except:
+            error = 'Enter proper values'
+            cur.close()
+            conn.close()
+
+        if error == None:
+            return render_template('vTeachersClass.html', teachers = teachers)
+    return render_template('vTeachersClass.html', error=error)

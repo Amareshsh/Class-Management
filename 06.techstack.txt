@@ -1,0 +1,6 @@
+The following techstack has been used to develop the application:
+
+1) database - postgres sql since data is not huge and its relational. Where postgres comes as opensource DB.
+2) apis - Using flask as python is versitile language easy to develop application readily.
+3) Front end - normal Html as little knowledege in front end as of now.
+4) Docker image - using docker desktop
