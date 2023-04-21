@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Add students {% endblock %}</h1>
+
+<div class="container">
+    <br>
+    <form action="" method="post">
+      <input type="text" placeholder="name" name="name" value="{{
+        request.form.name }}">
+      <input type="email" placeholder="email_id" name="email_id" value="{{
+        request.form.email_id }}">
+      <input type="date" placeholder="doj" name="doj" value="{{
+        request.form.doj }}">
+      <input type="date" placeholder="dob" name="dob" value="{{
+        request.form.dob }}">
+      <input class="btn btn-default" type="submit" value="Submit">
+    </form>
+    {% if error %}
+      <p class="error"><strong>Error:</strong> {{ error }}
+    {% endif %}
+  </div>
+{% endblock %}

@@ -4,7 +4,11 @@
     <h1>Welcome to College!</h1>
     <h2>{% block title %} List of classes avaliable today{% endblock %}</h2>
     <h3>{{ utc_dt }}</h3>
-    
+    <a href="{{ url_for('addStudents') }}"> Add students</a>
+    <a href="{{ url_for('addTeachers') }}"> Add teachers</a>
+    <a href="{{ url_for('sAssignClass') }}"> Assign Students class</a>
+    <a href="{{ url_for('tAssignClass') }}"> Assign Teachers class</a>
+
     <div style="width: 100%; margin: auto">
         {% for subject in subjects %}
         <div style="padding: 10px; background-color: #EEE; margin: 8px">

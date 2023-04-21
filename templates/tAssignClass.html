@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Assign Class to student {% endblock %}</h1>
+
+<div class="container">
+    <br>
+    <form action="" method="post">
+      <input type="number" placeholder="teacher_id" name="teacher_id" value="{{
+        request.form.teacher_id }}"><br>
+      <input type="number" placeholder="class_id" name="class_id" value="{{
+        request.form.class_id }}"><br>
+      <input class="btn btn-default" type="submit" value="Submit">
+    </form>
+    {% if error %}
+      <p class="error"><strong>Error:</strong> {{ error }}
+    {% endif %}
+  </div>
+{% endblock %}
